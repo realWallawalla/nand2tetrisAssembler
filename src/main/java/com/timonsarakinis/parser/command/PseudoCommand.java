@@ -2,10 +2,10 @@ package com.timonsarakinis.parser.command;
 
 public class PseudoCommand implements Command {
 
-    private String computeFormat;
+    private String symbol;
 
-    public PseudoCommand(String computeFormat) {
-        this.computeFormat = computeFormat;
+    public PseudoCommand(String symbol) {
+        this.symbol = symbol;
     }
 
     @Override
@@ -15,6 +15,6 @@ public class PseudoCommand implements Command {
 
     @Override
     public String getValue() {
-        return computeFormat;
+        return symbol;
     }
 }

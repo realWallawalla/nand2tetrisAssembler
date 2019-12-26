@@ -1,13 +1,21 @@
 package com.timonsarakinis.codemodule;
 
+import com.timonsarakinis.parser.command.ComputeCommand;
+import com.timonsarakinis.symboltablemodule.SymbolTable;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Integer.toBinaryString;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class TranslateToBinary {
     public static final int BASE = 111;
+    public static final String EMPTY_COMP = "0000000";
+    public static final String EMPTY_DEST = "000";
+    public static final String EMPTY_JUMP = "000";
+    private SymbolTable symbolTable = new SymbolTable();
     private final Map<String, String> destinations = new HashMap<>();
     private final Map<String, String> computes = new HashMap<>();
     private final Map<String, String> jumps = new HashMap<>();
@@ -71,29 +79,32 @@ public class TranslateToBinary {
         jumps.put("JMP", "111");
     }
 
-    public String getComputeBinary(String compKey, String destKey, String jumpKey) {
-        return BASE + comp(compKey) + dest(destKey) + jump(jumpKey);
+    public String getComputeBinary(ComputeCommand computeCommand) {
+        return BASE + comp(computeCommand.getComp()) + dest(computeCommand.getDest()) + jump(computeCommand.getJump());
     }
 
     /*remove 1 from to make 16bitBinary string. */
     public String getAddressBinary(String address) {
-        String binaryString = toBinaryString(parseInt(address));
-        return ("0000000000000000" + binaryString).substring(binaryString.length());
+        String binary16bit = "";
+        if (isNumeric(address)) {
+            String binaryValue = toBinaryString(parseInt(address));
+            binary16bit = ("0000000000000000" + binaryValue).substring(binaryValue.length());
+        } else {
+            String symbolInBinary = toBinaryString(parseInt(symbolTable.getAddress(address)));
+            binary16bit = ("0000000000000000" + symbolInBinary).substring(symbolInBinary.length());
+        }
+        return binary16bit;
     }
 
     public String dest(String destination) {
-        return destinations.get(destination);
+        return destinations.getOrDefault(destination, EMPTY_DEST);
     }
 
     public String comp(String compute) {
-        return computes.get(compute);
+        return computes.getOrDefault(compute, EMPTY_COMP);
     }
 
     public String jump(String jump) {
-        return jumps.get(jump);
-    }
-
-    public byte[] translateStringToByte(String commandValue) {
-        return (commandValue + System.lineSeparator()).getBytes();
+        return jumps.getOrDefault(jump, EMPTY_JUMP);
     }
 }

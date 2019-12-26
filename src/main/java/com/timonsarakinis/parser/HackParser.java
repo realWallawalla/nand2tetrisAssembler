@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 import static com.timonsarakinis.parser.command.CommandType.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class HackParser implements Parser {
-
     private final ListIterator<String> iterator;
     private Command currentCommand;
     private TranslateToBinary translateToBinary = new TranslateToBinary();
@@ -38,17 +36,20 @@ public class HackParser implements Parser {
     }
 
     public byte[] translateCurrentCommand() {
-        if (commandType() == A_COMMAND && isNumeric(currentCommand.getValue())) {
-            return (translateToBinary.getAddressBinary(currentCommand.getValue()) + System.lineSeparator()).getBytes(UTF_8);
+        if (commandType() == A_COMMAND) {
+            return convertToBytes(currentCommand.getValue());
         }
         if (commandType() == C_COMMAND) {
-            String computeBinary = translateToBinary.getComputeBinary(((ComputeCommand) currentCommand).getComp(), ((ComputeCommand) currentCommand).getDest(),
-                    ((ComputeCommand) currentCommand).getJump());
-            return (computeBinary + System.lineSeparator()).getBytes(UTF_8);
+            String computeBinary = translateToBinary.getComputeBinary(((ComputeCommand) currentCommand));
+            return (computeBinary + System.lineSeparator()).getBytes();
         }
         if (commandType() == L_COMMAND) {
         }
         return new byte[0];
+    }
+
+    private byte[] convertToBytes(String address) {
+        return (translateToBinary.getAddressBinary(address) + System.lineSeparator()).getBytes();
     }
 
     public CommandType commandType() {
@@ -56,10 +57,7 @@ public class HackParser implements Parser {
     }
 
     public String symbol() {
-        if (currentCommand.getCommandType() == A_COMMAND || currentCommand.getCommandType() == L_COMMAND) {
-            return currentCommand.getValue();
-        }
-        return "";
+        return isNumeric(currentCommand.getValue()) ? "" : currentCommand.getValue();
     }
 
     public String dest() {

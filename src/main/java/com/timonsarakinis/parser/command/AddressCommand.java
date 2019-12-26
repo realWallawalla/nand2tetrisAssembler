@@ -1,5 +1,7 @@
 package com.timonsarakinis.parser.command;
 
+import static com.timonsarakinis.parser.command.CommandType.A_COMMAND;
+
 public class AddressCommand implements Command {
     private String value;
 
@@ -9,7 +11,7 @@ public class AddressCommand implements Command {
 
     @Override
     public CommandType getCommandType() {
-        return CommandType.A_COMMAND;
+        return A_COMMAND;
     }
 
     @Override

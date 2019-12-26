@@ -29,15 +29,14 @@ public class FileReaderWriter {
 
     public static void writeToFile(byte[] line, Path path) {
         try {
-            //TODO FIX APPENDER
             Files.write(path, line, CREATE, APPEND);
-            System.out.println("Successfully written data to the file");
+            System.out.println("Successfully written line to output file");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static Path getPath() {
+    public static Path getOutputPath() {
         Path path = Paths.get("src/main/resources/parsedFile.hack");
         if (Files.exists(path)) {
             try {

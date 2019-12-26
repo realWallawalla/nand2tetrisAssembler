@@ -14,12 +14,17 @@ public class CommandFactory {
             String symbol = line.substring(1, line.indexOf(')'));
             return new PseudoCommand(symbol);
         }
-        if (line.contains(";"))  {
-            return new ComputeCommand("", line.substring(0, line.indexOf(";")), line.substring(line.indexOf(";")+1));
+        String lineWithoutComments = groomLine(line);
+        if (lineWithoutComments.contains(";"))  {
+            return new ComputeCommand("", lineWithoutComments.substring(0, line.indexOf(";")), lineWithoutComments.substring(line.indexOf(";")+1));
         }
-        if (line.contains("="))  {
-            return new ComputeCommand(line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=")+1), "");
+        if (lineWithoutComments.contains("="))  {
+            return new ComputeCommand(lineWithoutComments.substring(0, lineWithoutComments.indexOf("=")), lineWithoutComments.substring(line.indexOf("=")+1), "");
         }
         return new CommandIgnore();
+    }
+
+    private static String groomLine(String line) {
+        return line.contains("/") ? line.substring(0, line.indexOf('/')).trim() : line;
     }
 }
